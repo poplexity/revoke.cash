@@ -1,5 +1,5 @@
 import { providers, Signer } from 'ethers'
-import React, { useEffect, useState } from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import { ClipLoader } from 'react-spinners'
 import { Erc20TokenData } from '../common/interfaces'
 import { Allowance } from './interfaces'
@@ -21,11 +21,7 @@ function Erc20Token({ signer, provider, chainId, token, signerAddress, inputAddr
   const [allowances, setAllowances] = useState<Allowance[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  useEffect(() => {
-    loadData()
-  }, [inputAddress])
-
-  const loadData = async () => {
+  const loadData = useCallback(async (token) => {
     setLoading(true)
 
     // Filter out zero-value allowances and sort from high to low
@@ -35,7 +31,12 @@ function Erc20Token({ signer, provider, chainId, token, signerAddress, inputAddr
 
     setAllowances(loadedAllowances)
     setLoading(false)
-  }
+  }, [inputAddress]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    loadData(token)
+  }, [loadData, token, inputAddress])
 
   // Do not render tokens without balance or allowances
   const balanceString = toFloat(Number(token.balance), token.decimals)

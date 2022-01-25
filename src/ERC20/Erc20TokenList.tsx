@@ -1,6 +1,6 @@
 import { Signer, Contract, providers } from 'ethers'
 import { Interface, getAddress, hexZeroPad } from 'ethers/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { Erc20TokenData, TokenMapping } from '../common/interfaces'
 import Erc20Token from './Erc20Token'
@@ -32,11 +32,7 @@ function Erc20TokenList({
   const [tokens, setTokens] = useState<Erc20TokenData[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  useEffect(() => {
-    loadData()
-  }, [inputAddress])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!inputAddress) return
 
     setLoading(true)
@@ -89,7 +85,12 @@ function Erc20TokenList({
 
     setTokens(sortedTokens)
     setLoading(false)
-  }
+  }, [chainId, inputAddress, provider, tokenMapping]);
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
 
   if (loading) {
     return (<ClipLoader css="margin-bottom: 10px;" size={40} color={'#000'} loading={loading} />)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import { Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { ClipLoader } from 'react-spinners'
@@ -27,11 +27,7 @@ function Erc20Allowance({ signer, provider, spender, allowance, inputAddress, si
   const [spenderAppName, setSpenderAppName] = useState<string | undefined>()
   const [updatedAllowance, setUpdatedAllowance] = useState<string | undefined>()
 
-  useEffect(() => {
-    loadData()
-  }, [spender, allowance])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
 
     const newEnsSpender = await lookupEnsName(spender, provider)
@@ -42,11 +38,11 @@ function Erc20Allowance({ signer, provider, spender, allowance, inputAddress, si
     setSpenderAppName(newSpenderAppName)
 
     setLoading(false)
-  }
+  }, [chainId, provider, spender]);
 
   const revoke = async () => update('0')
 
-  const update = async (newAllowance: string) => {
+  const update = useCallback(async (newAllowance: string) => {
     const bnNew = BigNumber.from(fromFloat(newAllowance, token.decimals))
     const writeContract = new Contract(token.contract.address, token.contract.interface, signer ?? provider)
 
@@ -84,7 +80,12 @@ function Erc20Allowance({ signer, provider, spender, allowance, inputAddress, si
         emitAnalyticsEvent("erc20_update")
       }
     }
-  }
+  }, [onRevoke, provider, signer, spender, token]);
+
+  useEffect(() => {
+    loadData()
+  }, [loadData, spender, allowance])
+
 
   if (loading) {
     return (<div><ClipLoader size={10} color={'#000'} loading={loading} /></div>)

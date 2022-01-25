@@ -52,6 +52,8 @@ export function getExplorerUrl(chainId: number): string | undefined {
     6: 'https://blockscout.com/etc/kotti/address',
     10: 'https://optimistic.etherscan.io/address',
     30: 'https://blockscout.com/rsk/mainnet/address',
+    40: 'https://teloscan.io/address',
+    41: 'https://testnet.teloscan.io/address',
     42: 'https://kovan.etherscan.io/address',
     56: 'https://bscscan.com/address',
     61: 'https://blockscout.com/etc/mainnet/address',
@@ -97,7 +99,7 @@ export function getDappListName(chainId: number): string | undefined {
 
 export function isSupportedNetwork(chainId: number): boolean {
   // Supported for now are only ETH, xDAI, SmartBCH, Arbitrum & AVAX. Other chains fail on the RPC calls.
-  const supportedNetworks = [1, 3, 4, 5, 42, 100, 10000, 42161, 43113, 43114]
+  const supportedNetworks = [1, 3, 4, 5, 40, 42, 100, 10000, 42161, 43113, 43114]
   return supportedNetworks.includes(chainId);
 }
 
@@ -136,6 +138,7 @@ function getTokenListUrl(chainId: number, standard: TokenStandard = 'ERC20'): st
     ERC20: {
       1: 'https://tokens.1inch.eth.link/',
       10: 'https://static.optimism.io/optimism.tokenlist.json',
+      40: 'https://github.com/telosnetwork/token-list/blob/main/telosevm.tokenlist.json',
       56: 'https://raw.githubusercontent.com/pancakeswap/pancake-swap-interface/master/src/constants/token/pancakeswap.json',
       100: 'https://tokens.honeyswap.org',
       137: 'https://unpkg.com/quickswap-default-token-list@1.0.28/build/quickswap-default.tokenlist.json',
